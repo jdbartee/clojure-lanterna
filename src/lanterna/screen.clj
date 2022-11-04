@@ -144,14 +144,23 @@
   ([^Screen screen [x y]]
    (.setCursorPosition screen x y)))
 
+(defn hide-cursor
+  "Hide the cursor, preventing it from being drawn on the screen.
+   
+   This won't affect where tex is printed when you use put-string -- the
+   coordinates passed to put-string determine that."
+  [^Screen screen]
+  (.setCursorPosition screen nil))
 
 (defn get-cursor
-  "Return the cursor position as [col row]."
+  "Return the cursor position as [col row].
+   If cursor is hidden returns :hidden"
   [^Screen screen]
-  (let [pos (.getCursorPosition screen)
-        col (.getColumn pos)
-        row (.getRow pos)]
-    [col row]))
+  (if-let [pos (.getCursorPosition screen)]
+    (let [col (.getColumn pos)
+          row (.getRow pos)]
+      [col row])
+    :hidden))
 
 
 (defn put-string
